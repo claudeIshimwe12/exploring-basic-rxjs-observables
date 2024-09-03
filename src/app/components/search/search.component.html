@@ -1,0 +1,38 @@
+<section class="wrapper">
+  <form [formGroup]="searchForm" class="search-container">
+    <input
+      formControlName="search"
+      type="text"
+      placeholder="Search..."
+      id="search-input"
+    />
+    <button type="submit" id="search-button">Search</button>
+  </form>
+
+  <div *ngIf="posts$ | async as posts">
+    @if (posts.length > 0) {
+    <div class="posts-container">
+      <div *ngFor="let post of posts$ | async" class="post-card">
+        <img [src]="post.image" alt="{{ post.title }}" class="post-image" />
+        <div class="post-content">
+          <h2 class="post-title">{{ post.title }}</h2>
+          <p class="post-description">{{ post.description }}</p>
+        </div>
+      </div>
+    </div>
+    } @else {
+    <section class="no-results-container">
+      <div class="no-results-content">
+        <h1 class="no-results-title">No Posts Found</h1>
+        <p class="no-results-description">
+          We couldn't find any posts matching your search.
+        </p>
+      </div>
+    </section>
+
+    }
+  </div>
+  <div *ngIf="!(posts$ | async)">
+    <loader />
+  </div>
+</section>
