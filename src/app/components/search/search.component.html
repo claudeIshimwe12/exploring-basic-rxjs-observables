@@ -9,10 +9,13 @@
     <button type="submit" id="search-button">Search</button>
   </form>
 
-  <div *ngIf="posts$ | async as posts">
-    @if (posts.length > 0) {
+  <div *ngIf="data$ | async as data; else loaderTemplate">
+    @if (data.posts.length > 0) {
+    <div>
+      <h1>Hi {{ data.user.name }}</h1>
+    </div>
     <div class="posts-container">
-      <div *ngFor="let post of posts$ | async" class="post-card">
+      <div *ngFor="let post of data.posts" class="post-card">
         <img [src]="post.image" alt="{{ post.title }}" class="post-image" />
         <div class="post-content">
           <h2 class="post-title">{{ post.title }}</h2>
@@ -32,7 +35,7 @@
 
     }
   </div>
-  <div *ngIf="!(posts$ | async)">
+  <ng-template #loaderTemplate>
     <loader />
-  </div>
+  </ng-template>
 </section>

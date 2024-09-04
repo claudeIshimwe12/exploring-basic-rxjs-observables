@@ -1,8 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { Service } from '../../services/data.service';
-import { debounceTime, Observable } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  Observable,
+  skip,
+  takeWhile,
+} from 'rxjs';
 import { Post } from '../../models/post.interface';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { CombinedData } from '../../models/combined-data.interface';
 
 @Component({
   selector: 'search',
@@ -10,7 +22,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrl: './search.component.css',
 })
 export class SearchComponent implements OnInit {
-  posts$!: Observable<Post[]>;
+  data$!: Observable<CombinedData>;
   searchForm: FormGroup;
   constructor(private service: Service, private fb: FormBuilder) {
     this.searchForm = this.fb.group({
@@ -18,11 +30,12 @@ export class SearchComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-    this.posts$ = this.service.getPosts();
+    this.data$ = this.service.getCombinedData();
+
     this.searchForm.valueChanges
-      .pipe(debounceTime(1000))
+      .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe((saerchTerm) => {
-        this.posts$ = this.service.getFilteredPosts(saerchTerm.search);
+        this.data$ = this.service.getCombinedFilteredData(saerchTerm.search);
       });
   }
 }

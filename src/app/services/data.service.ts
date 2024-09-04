@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { delay, map, Observable, of } from 'rxjs';
+import { combineLatest, delay, map, Observable, of } from 'rxjs';
 import { User } from '../models/user.interface';
 import { Post } from '../models/post.interface';
+import { CombinedData } from '../models/combined-data.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +16,8 @@ export class Service {
   //   { id: 3, name: 'Brown', email: 'jb@comcast.com' },
   // ]);
 
-  users$: Observable<User[]> = new Observable((observer) => {
-    observer.next([
-      { id: 1, name: 'John', email: 'johndoe@gmail.com' },
-      { id: 2, name: 'Jason', email: 'jasont@hotmail.com' },
-      { id: 3, name: 'Brown', email: 'jb@comcast.com' },
-    ]);
+  user$: Observable<User> = new Observable((observer) => {
+    observer.next({ id: 1, name: 'Jason', email: 'jt@celtics.com' });
   });
   posts$: Observable<Post[]> = of([
     {
@@ -106,20 +103,30 @@ export class Service {
     },
   ]);
 
-  getUsers(): Observable<User[]> {
-    return this.users$;
-  }
-
-  getPosts(): Observable<Post[]> {
-    return this.posts$.pipe(delay(750));
-  }
   getFilteredPosts(term: string): Observable<Post[]> {
     return this.posts$.pipe(
       map((posts) =>
-        posts.filter((post) =>
-          post.title.toLocaleLowerCase().includes(term.toLocaleLowerCase())
+        posts.filter(
+          (post) =>
+            post.title.toLocaleLowerCase().includes(term.toLocaleLowerCase()) ||
+            post.description
+              .toLocaleLowerCase()
+              .includes(term.toLocaleLowerCase())
         )
       )
+    );
+  }
+
+  getCombinedData(): Observable<CombinedData> {
+    return combineLatest([this.user$, this.posts$]).pipe(
+      delay(750),
+      map(([user, posts]) => ({ user, posts }))
+    );
+  }
+  getCombinedFilteredData(term: string): Observable<CombinedData> {
+    return combineLatest([this.user$, this.getFilteredPosts(term)]).pipe(
+      delay(500),
+      map(([user, posts]) => ({ user, posts }))
     );
   }
 }
