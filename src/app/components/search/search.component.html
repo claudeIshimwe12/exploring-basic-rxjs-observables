@@ -12,7 +12,9 @@
   <div *ngIf="data$ | async as data; else loaderTemplate">
     @if (data.posts.length > 0) {
     <div>
-      <h1>Hi {{ data.user.name }}</h1>
+      <h1>
+        Hi {{ data.user.name }} The following is the list of all your posts
+      </h1>
     </div>
     <div class="posts-container">
       <div *ngFor="let post of data.posts" class="post-card">

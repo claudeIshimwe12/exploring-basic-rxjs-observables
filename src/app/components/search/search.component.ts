@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnInit } from '@angular/core';
 import { Service } from '../../services/data.service';
 import {
   debounceTime,
@@ -12,6 +12,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  MinLengthValidator,
   Validators,
 } from '@angular/forms';
 import { CombinedData } from '../../models/combined-data.interface';
@@ -21,17 +22,18 @@ import { CombinedData } from '../../models/combined-data.interface';
   templateUrl: './search.component.html',
   styleUrl: './search.component.css',
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, AfterViewInit {
   data$!: Observable<CombinedData>;
   searchForm: FormGroup;
   constructor(private service: Service, private fb: FormBuilder) {
     this.searchForm = this.fb.group({
-      search: '',
+      search: ['', [Validators.required, Validators.minLength(4)]],
     });
   }
   ngOnInit(): void {
     this.data$ = this.service.getCombinedData();
-
+  }
+  ngAfterViewInit(): void {
     this.searchForm.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe((saerchTerm) => {
