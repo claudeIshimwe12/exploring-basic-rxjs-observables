@@ -6,10 +6,9 @@ import { AppComponent } from './app.component';
 import { SearchComponent } from './components/search/search.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PrivatePostsComponent } from './components/private-posts/private-posts.component';
 
 @NgModule({
-  declarations: [AppComponent, SearchComponent, LoaderComponent, PrivatePostsComponent],
+  declarations: [AppComponent, SearchComponent, LoaderComponent],
   imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [],
   bootstrap: [AppComponent],
